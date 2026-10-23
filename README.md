@@ -1,89 +1,81 @@
 # Explainable ML-Based Network Intrusion Detection System (NIDS)
 
-IBM SkillsBuild Cybersecurity Bootcamp 2026 (BharatCares) - Final Project
+**IBM SkillsBuild Cybersecurity Bootcamp 2026 (BharatCares) - Final Project**
+Author: Sakshi vinod mankar | Bsc forensic science | sandip university nashik
 
 ## Project Description
-A machine learning system that detects malicious network connections, classifies the attack type, explains each alert with **SHAP**, and converts predictions into **SOC-style alerts with severity levels and recommended response actions**. A Streamlit dashboard lets you analyse traffic files and test single connections.
+A machine-learning system that detects malicious network connections, classifies the attack type, explains every alert
+with **SHAP**, and turns predictions into **SOC-style alerts with severity levels and recommended actions**.
+A Streamlit dashboard lets you analyse traffic files, simulate live traffic and test single connections.
 
 **Key features**
 - Binary detection (Normal vs Attack) and 5-class classification (Normal, DoS, Probe, R2L, U2R)
 - Four models compared with stratified cross-validation: Logistic Regression, Decision Tree, Random Forest, XGBoost
 - Leak-free preprocessing inside the scikit-learn pipeline
-- Evaluation on the **official KDDTest+ set**, which contains unseen attack types
-- Threshold analysis (recall vs false-alarm trade-off) and error analysis by attack category
-- SHAP explanations (global summary and a local waterfall for one alert)
-- SOAR-style alert log (`alerts_log.csv`) and an interactive Streamlit dashboard
+- Evaluation on the **official KDDTest+ set**, which contains attack types unseen in training
+- Threshold analysis, error analysis, SHAP explanations and a SOAR-style alert log
+- Interactive dashboard (CyberShield NIDS)
 
 ## Dataset
-**NSL-KDD** (University of New Brunswick, Canadian Institute for Cybersecurity)
+**NSL-KDD** - Canadian Institute for Cybersecurity, University of New Brunswick
 - Kaggle: https://www.kaggle.com/datasets/hassan06/nslkdd
-- Official: https://www.unb.ca/cic/datasets/nsl.html
-- Files used: `KDDTrain+.txt` (125,973 records) and `KDDTest+.txt` (22,544 records), 41 features each
+- Official page: https://www.unb.ca/cic/datasets/nsl.html
+- Files: `KDDTrain+.txt` (125,973 records) and `KDDTest+.txt` (22,544 records), 41 features per connection
 
 The notebook downloads the dataset automatically.
 
 ## Technologies Used
-Python, pandas, NumPy, scikit-learn, XGBoost, SHAP, Matplotlib, Seaborn, joblib, Streamlit, Google Colab
+Python, pandas, NumPy, scikit-learn, XGBoost, SHAP, Matplotlib, Seaborn, Altair, joblib, Streamlit, Google Colab
 
 ## Results (official KDDTest+ set)
-> Fill in from Section 15 of the notebook.
+Champion model: **XGBoost (Tuned)**
 
-| Metric | Value |
-|---|---|
-| Champion model | FILL_IN |
-| Accuracy | FILL_IN |
-| Precision | FILL_IN |
-| Recall (attacks) | FILL_IN |
-| F1-score | FILL_IN |
-| ROC-AUC | FILL_IN |
+| Model | Accuracy | Precision | Recall | F1-Score | ROC-AUC |
+|---|---|---|---|---|---|
+| Logistic Regression | 0.7540 | 0.9168 | 0.6246 | 0.7430 | 0.7904 |
+| Decision Tree | 0.7976 | 0.9654 | 0.6684 | 0.7899 | 0.8183 |
+| Random Forest (Tuned) | 0.7698 | 0.9676 | 0.6162 | 0.7529 | 0.9686 |
+| XGBoost (Tuned) | 0.8031 | 0.9690 | 0.6757 | 0.7962 | 0.9723 |
 
-Test scores are lower than cross-validation scores because `KDDTest+` contains attack types that never appear in the training data, which mimics real zero-day behaviour.
+Test scores are lower than cross-validation scores because KDDTest+ contains attack types that never appear in training,
+which mimics real zero-day behaviour.
 
 ## Setup and Run
 
 ### 1. Train the model (Google Colab, recommended)
-1. Upload `YourName_IntrusionDetector.ipynb` to https://colab.research.google.com
-2. Run `Runtime -> Run all` (about 15-20 minutes). The dataset downloads automatically.
-3. The notebook creates `model.pkl`, `multiclass_model.pkl`, `scaler.pkl`, `columns.pkl`, `alerts_log.csv`, and the `images/` and `results/` folders.
+1. Open `SakshiMankar_IntrusionDetector.ipynb` in [Google Colab](https://colab.research.google.com)
+2. Run `Runtime -> Run all` (about 15-20 minutes). The dataset is downloaded automatically.
+3. The notebook creates `model.pkl`, `multiclass_model.pkl`, `scaler.pkl`, `columns.pkl`, `alerts_log.csv`, `images/` and `results/`.
 
-### 2. Run the dashboard locally
+### 2. Run the dashboard
 ```bash
-git clone https://github.com/YOUR-USERNAME/YOUR-REPO.git
-cd YOUR-REPO
+git clone https://github.com/sakshimankar23/ML-Network-Intrusion-Detector.git.git
+cd ML-Network-Intrusion-Detector.git
 pip install -r requirements.txt
 streamlit run app.py
 ```
-Place `model.pkl` and `columns.pkl` (from the notebook) in the same folder as `app.py`. Upload `KDDTest+.txt` in the first tab to see the alert dashboard.
+Use the **same library versions as Colab** (scikit-learn and XGBoost) so that `model.pkl` loads correctly, or run the app
+inside Colab. For demo data, place `KDDTest+.txt` in a folder named `data/`.
 
 ## Repository Structure
 ```
-├── YourName_IntrusionDetector.ipynb   # full training and evaluation notebook
-├── app.py                             # Streamlit dashboard
-├── requirements.txt
-├── README.md
-├── YourName_ProjectReport.docx
-├── model.pkl, multiclass_model.pkl, scaler.pkl, columns.pkl
-├── alerts_log.csv
-├── images/                            # charts used in the report
-└── results/                           # metric tables (CSV)
+SakshiMankar_IntrusionDetector.ipynb
+app.py
+requirements.txt
+README.md
+Sakshi_vinod_mankar_ProjectReport.docx
+model.pkl, multiclass_model.pkl, scaler.pkl, columns.pkl
+alerts_log.csv
+images/        charts used in the report
+results/       metric tables (CSV)
+screenshots/   dashboard screenshots
 ```
 
-## Limitations
-- NSL-KDD is derived from 1999-era traffic; modern threats are not represented.
-- Rare classes (R2L, U2R) are hard to detect from flow statistics alone.
-- Supervised models struggle with attack types they never saw.
-
-## Future Work
-UNSW-NB15 / CIC-IDS2017 evaluation, autoencoder anomaly detection, live packet capture with Scapy or Zeek, threat-intelligence enrichment (VirusTotal, AbuseIPDB).
+## Key Information
+- Severity levels: Low (below threshold), Medium (up to 70%), High (70-90%), Critical (above 90%)
+- Weakest classes: R2L and U2R, because they resemble normal user behaviour and are rare in the training data
+- Limitations: NSL-KDD is an older benchmark; real networks are noisier; unseen attacks are hard for supervised models
+- Future work: UNSW-NB15 / CIC-IDS2017, autoencoder anomaly detection, live packet capture, threat-intelligence enrichment
 
 ## Author
-Your Name - IBM SkillsBuild Cybersecurity Bootcamp 2026
-# ML-Network-Intrusion-Detector
-# ML-Network-Intrusion-Detector
-# ML-Network-Intrusion-Detector
-# ML-Network-Intrusion-Detector
-# ML-Network-Intrusion-Detector
-# ML-Network-Intrusion-Detector
-# ML-Network-Intrusion-Detector
-# ML-Network-Intrusion-Detector
-# ML-Network-Intrusion-Detector
+Sakshi vinod mankar - IBM SkillsBuild Cybersecurity Bootcamp 2026
